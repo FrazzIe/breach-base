@@ -1,0 +1,37 @@
+{
+	"name": "breach-base",
+	"version": "1.0.0",
+	"description": "A central management interface for handling data",
+	"scripts": {
+		"build": "webpack --config webpack.prod.js",
+		"watch": "webpack --config webpack.dev.js"
+	},
+	"repository": "git+https://github.com/FrazzIe/breach-base.git",
+	"keywords": [
+		"typescript",
+		"ts",
+		"resource",
+		"webpack",
+		"...keywords"
+	],
+	"author": "Fraser Watt",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/FrazzIe/breach-base/issues"
+	},
+	"homepage": "https://github.com/FrazzIe/breach-base#readme",
+	"private": true,
+	"devDependencies": {
+		"ifdef-loader": "^2.3.0",
+		"remove-files-webpack-plugin": "^1.4.4",
+		"ts-loader": "^9.1.2",
+		"typescript": "^4.2.4",
+		"webpack": "^5.37.0",
+		"webpack-cli": "^4.7.0"
+	},
+	"dependencies": {
+		"@citizenfx/client": "^2.0.3930-1",
+		"@citizenfx/server": "^2.0.3930-1",
+		"@types/node": "^15.0.2"
+	}
+}
