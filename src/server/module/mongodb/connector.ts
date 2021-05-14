@@ -30,7 +30,7 @@ class Connector {
 
 		for (let key in this.convars) {
 			if (this.convars[key] == _defaultConvar)
-				console.warn(`[MongoDB Connector] Convar "mongodb_${key}" is not set`); //Replace with proper logger util?
+				console.warn(`MongoDB Convar "mongodb_${key}" is not set`); //Replace with proper logger util?
 		}
 
 		this.uri = this.CreateUri();
