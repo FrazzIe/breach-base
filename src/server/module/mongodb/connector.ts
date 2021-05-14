@@ -55,9 +55,9 @@ class Connector {
 	public Connect(): Promise<boolean> {
 		let instance: Connector = this;
 		return new Promise((resolve, reject) => {
-			instance.client.connect((err: MongoError) => {
-				if (err) {
-					reject(err);
+			instance.client.connect((error: MongoError) => {
+				if (error) {
+					reject(error);
 					return;
 				}
 
