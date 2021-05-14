@@ -15,7 +15,7 @@ class Connector {
 	 */
 	constructor() {
 		this.uri = this.GetUri();
-		this.client = new MongoClient(this.uri);
+		this.client = new MongoClient(this.uri, { useUnifiedTopology: true });
 		this.initialised = false;
 	}
 
