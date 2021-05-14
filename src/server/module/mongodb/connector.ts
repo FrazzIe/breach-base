@@ -66,3 +66,5 @@ class Connector {
 		return this.database;
 	}
 }
+
+export default new Connector();
