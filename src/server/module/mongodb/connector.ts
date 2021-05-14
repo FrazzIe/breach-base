@@ -24,7 +24,7 @@ class Connector {
 	 * @return {string} The constructed MongoDB URI from settings.json
 	 */
 	private GetUri(): string {
-		return `mongodb://${settings.username}:${settings.password}@${settings.host}:${settings.port}/${settings.database}`;
+		return `mongodb://${encodeURIComponent(settings.username)}:${encodeURIComponent(settings.password)}@${settings.host}:${settings.port}/${settings.database}`;
 	}
 
 	/**
