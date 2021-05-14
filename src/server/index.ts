@@ -1,4 +1,8 @@
+import { Db } from "mongodb";
 import DbConnector from "./module/mongodb/index";
 
-DbConnector();
-console.log("welp");
+async function Init() {
+	const DbInstance: Db = await DbConnector();
+}
+
+setImmediate(Init);

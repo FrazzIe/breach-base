@@ -1,9 +1,21 @@
+import { Db } from "mongodb";
 import Connector from "./connector";
+import DbCreate from "./crud/create";
 
-export default function Init(): void {
-	Connector.Connect().then((result: boolean) => {
-		console.log("Connected: " + result);
-	}).catch((error) => {
-		console.error(error.message, error);
-	});
+let database: Db = null;
+
+function OnConnectSuccess(result: boolean) {
+	database = Connector.Database;
+	DbCreate.Init(database, result);
+	console.log("OK");
+}
+
+function OnConnectError(error: Error) {
+	console.error(`MongoDB ${error.message}`);
+}
+
+export default async function Init(): Promise<Db> {
+	await Connector.Connect().then(OnConnectSuccess).catch(OnConnectError);
+
+	return database;
 }
