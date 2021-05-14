@@ -34,6 +34,6 @@
 		"@citizenfx/server": "^2.0.3930-1",
 		"@types/mongodb": "^3.6.12",
 		"@types/node": "^15.0.2",
-		"mongodb": "^3.6.6"
+		"mongodb": "3.6.3"
 	}
 }
