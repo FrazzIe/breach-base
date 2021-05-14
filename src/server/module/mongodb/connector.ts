@@ -1,11 +1,15 @@
 import { Db, MongoClient, MongoError } from "mongodb";
-import settings from "./settings.json";
+
+interface ICvarList {
+	[key: string]: string;
+}
 
 class Connector {
 	private uri: string;
 	private client: MongoClient;
 	private database: Db;
 	private initialised: boolean;
+	private convars: ICvarList;
 
 	/**
 	 * Stores the MongoDB URI
@@ -14,7 +18,22 @@ class Connector {
 	 * @constructor
 	 */
 	constructor() {
-		this.uri = this.GetUri();
+		const _defaultConvar: string = "_mongodb_";
+		this.convars = {
+			username: GetConvar("mongodb_username", _defaultConvar),
+			password: GetConvar("mongodb_password", _defaultConvar),
+			host: GetConvar("mongodb_host", _defaultConvar),
+			port: GetConvar("mongodb_port", _defaultConvar),
+			authdb: GetConvar("mongodb_authdb", _defaultConvar),
+			db: GetConvar("mongodb_db", _defaultConvar),
+		}
+
+		for (let key in this.convars) {
+			if (this.convars[key] == _defaultConvar)
+				console.warn(`[MongoDB Connector] Convar "mongodb_${key}" is not set`); //Replace with proper logger util?
+		}
+
+		this.uri = this.CreateUri();
 		this.client = new MongoClient(this.uri, { useUnifiedTopology: true });
 		this.initialised = false;
 	}
@@ -23,8 +42,8 @@ class Connector {
 	 * Constructs the MongoDB URI
 	 * @return {string} The constructed MongoDB URI from settings.json
 	 */
-	private GetUri(): string {
-		return `mongodb://${encodeURIComponent(settings.username)}:${encodeURIComponent(settings.password)}@${settings.host}:${settings.port}/${settings.database}`;
+	private CreateUri(): string {
+		return `mongodb://${encodeURIComponent(this.convars.username)}:${encodeURIComponent(this.convars.password)}@${this.convars.host}:${this.convars.port}/${this.convars.authdb}`;
 	}
 
 	/**
@@ -42,7 +61,7 @@ class Connector {
 					return;
 				}
 
-				instance.database = instance.client.db();
+				instance.database = instance.client.db(this.convars.db);
 				instance.initialised = true;
 
 				resolve(instance.initialised);
