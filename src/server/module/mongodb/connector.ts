@@ -1,4 +1,4 @@
-import { Db, MongoClient, MongoError } from "mongodb";
+import { Collection, Db, MongoClient, MongoError } from "mongodb";
 
 interface ICvarList {
 	[key: string]: string;
@@ -83,6 +83,15 @@ class Connector {
 	 */
 	public get Database() : Db {
 		return this.database;
+	}
+
+	/**
+	 * Fetch a database collection
+	 * @param collectionName name of collection
+	 * @return {string} collection instance
+	 */
+	public Collection(collectionName: string) : Collection {
+		return this.database.collection(collectionName);
 	}
 }
 
