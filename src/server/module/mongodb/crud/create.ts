@@ -1,11 +1,11 @@
-import { Collection, Db, InsertOneWriteOpResult, InsertWriteOpResult, ObjectId } from "mongodb";
+import { Collection, CollectionInsertManyOptions, CollectionInsertOneOptions, Db, InsertOneWriteOpResult, InsertWriteOpResult, ObjectId } from "mongodb";
 import DbMain from "./main";
 import { Wait } from "../../../../shared/utils";
 
 interface IInsertParams {
 	collection: string;
 	document: {} | Array<{}>;
-	options?: {};
+	options?: CollectionInsertOneOptions | CollectionInsertManyOptions;
 }
 
 interface IInsertCallback {
@@ -30,10 +30,10 @@ class DbCreate extends DbMain {
 
 	/**
 	 * Insert one or more documents into a collection
-	 * @param {IParams} params The insert object
+	 * @param {IInsertParams} params The insert object
 	 * @param {string} params.collection The MongoDB collection name
 	 * @param {{} | Array<{}>} params.document MongoDB documents to be inserted
-	 * @param {ICallback} callback The callback object
+	 * @param {IInsertCallback} callback The callback object
 	 * @returns {Promise<void>} Empty promise
 	 */
 	public async Insert(params: IInsertParams, callback?: IInsertCallback): Promise<void> {
