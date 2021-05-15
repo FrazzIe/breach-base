@@ -22,6 +22,13 @@ class DbCreate {
 	constructor() {
 		this.initialised = false;
 		this.database = null;
+
+		const Exports = (global as any).exports;
+
+		//Create exports
+		Exports("insert", this.Insert);
+		Exports("insertOne", this.Insert);
+		Exports("insertMany", this.Insert);
 	}
 
 	/**
