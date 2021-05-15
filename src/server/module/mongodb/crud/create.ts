@@ -1,6 +1,6 @@
 import { Collection, CollectionInsertManyOptions, CollectionInsertOneOptions, Db, InsertOneWriteOpResult, InsertWriteOpResult, ObjectId } from "mongodb";
-import DbMain from "./main";
 import { Wait } from "../../../../shared/utils";
+import DbMain from "./main";
 
 interface IInsertParams {
 	collection: string;
