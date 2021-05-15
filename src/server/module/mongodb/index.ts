@@ -1,6 +1,7 @@
 import { Db } from "mongodb";
 import Connector from "./connector";
 import DbCreate from "./crud/create";
+import DbRead from "./crud/read";
 import DbUpdate from "./crud/update";
 
 let database: Db = null;
@@ -8,6 +9,7 @@ let database: Db = null;
 function OnConnectSuccess(result: boolean) {
 	database = Connector.Database;
 	DbCreate.Init(database, result);
+	DbRead.Init(database, result);
 	DbUpdate.Init(database, result);
 	console.log("OK");
 }
