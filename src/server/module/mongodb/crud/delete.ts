@@ -19,6 +19,13 @@ class DbDelete extends DbMain {
 	 */
 	constructor() {
 		super();
+
+		const Exports = (global as any).exports;
+
+		//Create exports
+		Exports("delete", this.Delete);
+		Exports("deleteOne", this.Delete);
+		Exports("deleteMany", (params: IDeleteParams, callback?: IDeleteCallback) => this.Delete(params, callback, true));
 	}
 
 	/**
