@@ -19,6 +19,13 @@ class DbRead extends DbMain {
 	 */
 	constructor() {
 		super();
+
+		const Exports = (global as any).exports;
+
+		//Create exports
+		Exports("find", this.Find);
+		Exports("findOne", (params: IFindParams, callback?: IFindCallback) => this.Find(params, callback, true));
+		Exports("findMany", this.Find);
 	}
 
 	/**
