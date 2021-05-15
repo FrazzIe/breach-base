@@ -2,13 +2,13 @@ import { Collection, Db, InsertOneWriteOpResult, InsertWriteOpResult, ObjectId }
 import DbMain from "./main";
 import { Wait } from "../../../../shared/utils";
 
-interface IParams {
+interface IInsertParams {
 	collection: string;
 	document: {} | Array<{}>;
 	options?: {};
 }
 
-interface ICallback {
+interface IInsertCallback {
 	(success: number, count: number, insertedId: ObjectId | { [key: number]: any; }): void;
 }
 
@@ -36,7 +36,7 @@ class DbCreate extends DbMain {
 	 * @param {ICallback} callback The callback object
 	 * @returns {Promise<void>} Empty promise
 	 */
-	public async Insert(params: IParams, callback?: ICallback): Promise<void> {
+	public async Insert(params: IInsertParams, callback?: IInsertCallback): Promise<void> {
 		if (!this.initialised) {
 			while (!this.initialised) {
 				await Wait(10);
