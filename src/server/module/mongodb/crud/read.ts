@@ -21,6 +21,16 @@ class DbRead extends DbMain {
 		super();
 	}
 
+	/**
+	 * Finds one or more matched documents in a collection
+	 * @param {IFindParams} params The find object
+	 * @param {string} params.collection The MongoDB collection name
+	 * @param {FilterQuery<any>} params.filter MongoDB filter query
+	 * @param {WithoutProjection<FindOneOptions<any>> | FindOneOptions<any>} params.options MongoDB find options
+	 * @param {IFindCallback} callback The callback object
+	 * @param {boolean} one Whether to use findOne or find
+	 * @returns {Promise<void>} Empty promise
+	 */
 	public async Find(params: IFindParams, callback?: IFindCallback, one: boolean = false): Promise<void> {
 		if (!this.initialised) {
 			while (!this.initialised) {
