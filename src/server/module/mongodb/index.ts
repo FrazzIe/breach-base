@@ -3,6 +3,7 @@ import Connector from "./connector";
 import DbCreate from "./crud/create";
 import DbRead from "./crud/read";
 import DbUpdate from "./crud/update";
+import DbDelete from "./crud/delete";
 
 let database: Db = null;
 
@@ -11,7 +12,7 @@ function OnConnectSuccess(result: boolean) {
 	DbCreate.Init(database, result);
 	DbRead.Init(database, result);
 	DbUpdate.Init(database, result);
-	console.log("OK");
+	DbDelete.Init(database, result);
 }
 
 function OnConnectError(error: Error) {
