@@ -1,4 +1,5 @@
 import { Collection, Db, InsertOneWriteOpResult, InsertWriteOpResult, ObjectId } from "mongodb";
+import DbMain from "./main";
 import { Wait } from "../../../../shared/utils";
 
 interface IParams {
@@ -11,17 +12,13 @@ interface ICallback {
 	(success: number, count: number, insertedId: ObjectId | { [key: number]: any; }): void;
 }
 
-class DbCreate {
-	private initialised: boolean;
-	private database: Db;
-
+class DbCreate extends DbMain {
 	/**
 	 * Initialise class members
 	 * @constructor
 	 */
 	constructor() {
-		this.initialised = false;
-		this.database = null;
+		super();
 
 		const Exports = (global as any).exports;
 
@@ -29,16 +26,6 @@ class DbCreate {
 		Exports("insert", this.Insert);
 		Exports("insertOne", this.Insert);
 		Exports("insertMany", this.Insert);
-	}
-
-	/**
-	 * Sets the database and connection status
-	 * @param _database Database instance
-	 * @param _initialised Connection result
-	 */
-	public Init(_database: Db, _initialised: boolean): void {
-		this.database = _database;
-		this.initialised = _initialised;
 	}
 
 	/**
