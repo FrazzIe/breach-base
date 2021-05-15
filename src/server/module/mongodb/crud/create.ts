@@ -4,6 +4,7 @@ import { Wait } from "../../../../shared/utils";
 interface IParams {
 	collection: string;
 	document: {} | Array<{}>;
+	options?: {};
 }
 
 interface ICallback {
@@ -62,14 +63,14 @@ class DbCreate {
 		const insertMany: boolean = Array.isArray(params.document);
 
 		if (insertMany) {
-			const insert: InsertWriteOpResult<any> = await collection.insertMany(params.document as Array<{}>);
+			const insert: InsertWriteOpResult<any> = await collection.insertMany(params.document as Array<{}>, params.options);
 
 			if (callback)
 				callback(insert.result.ok, insert.insertedCount, insert.insertedIds);
 			return;
 		}
 
-		const insert: InsertOneWriteOpResult<any> = await collection.insertOne(params.document);
+		const insert: InsertOneWriteOpResult<any> = await collection.insertOne(params.document, params.options);
 
 		if (callback)
 			callback(insert.result.ok, insert.insertedCount, insert.insertedId);
