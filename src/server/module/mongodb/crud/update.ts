@@ -20,6 +20,13 @@ class DbUpdate extends DbMain {
 	 */
 	constructor() {
 		super();
+
+		const Exports = (global as any).exports;
+
+		//Create exports
+		Exports("update", this.Update);
+		Exports("updateOne", this.Update);
+		Exports("updateMany", (params: IUpdateParams, callback?: IUpdateCallback) => this.Update(params, callback, true));
 	}
 
 	/**
