@@ -32,8 +32,10 @@
 	"dependencies": {
 		"@citizenfx/client": "^2.0.3930-1",
 		"@citizenfx/server": "^2.0.3930-1",
+		"@types/hex2dec": "^1.1.0",
 		"@types/mongodb": "^3.6.12",
 		"@types/node": "^15.0.2",
+		"hex2dec": "^1.1.2",
 		"mongodb": "3.6.3"
 	}
 }
