@@ -4,11 +4,16 @@ export interface IIdentifierList {
 	[id: string]: string;
 }
 
+/**
+ * Retrieves a list of player identifiers (steam, license, license2, xbl, live, ip, discord, fivem)
+ * @param src The player server id
+ * @returns A list of player identifiers
+ */
 export function GetIdentifiers(src: string) {
 	const ids: IIdentifierList = {}
 
 	for (let i = 0; i < GetNumPlayerIdentifiers(src); i++) {
-		const data = GetPlayerIdentifier(src, i).split(':');
+		const data: string[] = GetPlayerIdentifier(src, i).split(':');
 
 		if (data.length > 0) {
 			if (data[0] == "steam")
