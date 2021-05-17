@@ -1,8 +1,8 @@
-import { DbOptions } from "./module/mongodb/index";
+import { Db } from "mongodb";
 import DbConnector from "./module/mongodb/index";
 
 async function Init() {
-	const dbOptions: DbOptions = await DbConnector();
+	const db: Db = await DbConnector();
 }
 
 setImmediate(Init);
