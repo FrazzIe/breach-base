@@ -4,6 +4,24 @@ import { RequiredIdentifiers, RequiredIdentifier } from "./identifer";
 interface IUserFindQueryItemField { [field: string]: any }
 interface IUserFindQueryItem { $and: Array<IUserFindQueryItemField> }
 interface IUserFindQuery { $or: Array<IUserFindQueryItem> }
+export interface IUserSchema {
+	ids: {
+		license?: string,
+		license2: string,
+		steam?: string,
+		discord?: string,
+		xbl?: string,
+		live?: string,
+		ip?: string,
+		fivem?: string,
+	},
+	tokens: string[],
+	ban?: {
+		reason: string,
+		expire?: number,
+		permanent?: boolean
+	}
+}
 const userCollection: string = "users";
 
 /**
@@ -32,7 +50,6 @@ export function BuildUserFindQuery(ids: IIdentifierList) {
 			userFindQueryItemField[`ids.${reqId}`] = ids[reqId];
 			userFindQueryItem.$and.push(userFindQueryItemField);
 		}
-
 
 		const userFindQueryItemField: IUserFindQueryItemField = {};
 
