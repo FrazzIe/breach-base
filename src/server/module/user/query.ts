@@ -4,6 +4,7 @@ import { RequiredIdentifiers, RequiredIdentifier } from "./identifer";
 interface IUserFindQueryItemField { [field: string]: any }
 interface IUserFindQueryItem { $and: Array<IUserFindQueryItemField> }
 interface IUserFindQuery { $or: Array<IUserFindQueryItem> }
+const userCollection: string = "users";
 
 /**
  * Creates a $or: [ $and: [ ids... ], ... ] query based on the required and optional identifers available
@@ -72,3 +73,5 @@ export function BuildUserFindQuery(ids: IIdentifierList) {
 
 	return userFindQuery;
 }
+
+export const UserCollection: string = userCollection;
