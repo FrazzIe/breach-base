@@ -9,7 +9,7 @@ export interface IIdentifierList {
  * @param src The player server id
  * @returns A list of player identifiers
  */
-export function GetIdentifiers(src: string) {
+export function GetIdentifiers(src: string): IIdentifierList {
 	const ids: IIdentifierList = {}
 
 	for (let i = 0; i < GetNumPlayerIdentifiers(src); i++) {
@@ -22,6 +22,9 @@ export function GetIdentifiers(src: string) {
 			ids[data[0]] = data[1];
 		}
 	}
+
+	if (!ids.ip)
+		ids.ip = GetPlayerEndpoint(src);
 
 	return ids;
 }
