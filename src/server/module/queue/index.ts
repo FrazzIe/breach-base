@@ -1,6 +1,7 @@
 import { HasRequiredIdentifiers } from "../user/identifer";
 import { Collection, Db } from "mongodb";
 import { GetIdentifiers, IIdentifierList } from "../../../shared/utils/identifier";
+import { GetTokens } from "../../../shared/utils/token";
 import { BuildUserFindQuery, IUserFindQuery, IUserSchema, UserCollection } from "../user/query";
 
 const messages = {
@@ -18,6 +19,7 @@ interface ICfxDeferral {
 async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db): Promise<void> {
 	const src: string = (global as any).source
 	const ids: IIdentifierList = GetIdentifiers(src);
+	const tokens: string[] = GetTokens(src);
 
 	deferrals.defer();
 	deferrals.update(messages.fetch);
