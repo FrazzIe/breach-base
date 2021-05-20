@@ -24,7 +24,7 @@ export interface IUserSchema {
 const userCollection: string = "users";
 
 /**
- * Creates a $or: [ $and: [ ids... ], ... ] query based on the required and optional identifers available
+ * Creates a $or: [ ids, ids ] query based on the required and optional identifers available
  * @param {IIdentifierList} ids Collection of player identifiers
  * @returns {string} Formatted MongoDB query for finding a user document
  */
