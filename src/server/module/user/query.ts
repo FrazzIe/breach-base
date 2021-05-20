@@ -26,69 +26,67 @@ const userCollection: string = "users";
 
 /**
  * Creates a $or: [ $and: [ ids... ], ... ] query based on the required and optional identifers available
- * @param ids Collection of player identifiers
- * @returns Formatted MongoDB query for finding a user document
+ * @param {IIdentifierList} ids Collection of player identifiers
+ * @returns {string} Formatted MongoDB query for finding a user document
  */
 export function BuildUserFindQuery(ids: IIdentifierList) {
-	let userFindQuery: IUserFindQuery = { $or: [] };
+	let query: IUserFindQuery = { $or: [] };
 	let optionalCount = 0;
 
 	// Push all required with a single optional in a $and entry
 	for (let idx = 0; idx < RequiredIdentifier.length; idx++) {
 		const id = RequiredIdentifier[idx];
 
-		if (!ids[id])
-			continue;
+		if (ids[id]) {
+			let item: IUserFindQueryItem = { $and: [] };
 
-		let userFindQueryItem: IUserFindQueryItem = { $and: [] };
+			// Collect all the required fields in an array
+			for (let reqIdx = 0; reqIdx < RequiredIdentifiers.length; reqIdx++) {
+				const reqId = RequiredIdentifiers[reqIdx];
+				const field: IUserFindQueryItemField = {};
 
-		// Collect all the required fields in an array
-		for (let reqIdx = 0; reqIdx < RequiredIdentifiers.length; reqIdx++) {
-			const reqId = RequiredIdentifiers[reqIdx];
-			const userFindQueryItemField: IUserFindQueryItemField = {};
+				field[`ids.${reqId}`] = ids[reqId];
+				item.$and.push(field);
+			}
 
-			userFindQueryItemField[`ids.${reqId}`] = ids[reqId];
-			userFindQueryItem.$and.push(userFindQueryItemField);
+			const field: IUserFindQueryItemField = {};
+
+			field[`ids.${id}`] = ids[id];
+			item.$and.push(field);
+			query.$or.push(item);
+			optionalCount++;
 		}
-
-		const userFindQueryItemField: IUserFindQueryItemField = {};
-
-		userFindQueryItemField[`ids.${id}`] = ids[id];
-		userFindQueryItem.$and.push(userFindQueryItemField);
-		userFindQuery.$or.push(userFindQueryItem);
-		optionalCount++;
 	}
 
 	if (optionalCount > 1) {
 		// Push all required and optional identifers in a $and entry
-		let userFindQueryItem: IUserFindQueryItem = { $and: [] };
+		let item: IUserFindQueryItem = { $and: [] };
 
 		// Collect all the required fields in an array
 		for (let reqIdx = 0; reqIdx < RequiredIdentifiers.length; reqIdx++) {
 			const reqId = RequiredIdentifiers[reqIdx];
-			const userFindQueryItemField: IUserFindQueryItemField = {};
+			const field: IUserFindQueryItemField = {};
 
-			userFindQueryItemField[`ids.${reqId}`] = ids[reqId];
-			userFindQueryItem.$and.push(userFindQueryItemField);
+			field[`ids.${reqId}`] = ids[reqId];
+			item.$and.push(field);
 		}
 
 		// Push all optional in a $and entry
 		for (let idx = 0; idx < RequiredIdentifier.length; idx++) {
 			const id = RequiredIdentifier[idx];
 
-			if (!ids[id])
-				continue;
+			if (ids[id]) {
+				const field: IUserFindQueryItemField = {};
 
-			const userFindQueryItemField: IUserFindQueryItemField = {};
-
-			userFindQueryItemField[`ids.${id}`] = ids[id];
-			userFindQueryItem.$and.push(userFindQueryItemField);
+				field[`ids.${id}`] = ids[id];
+				item.$and.push(field);
+			}
 		}
 
-		userFindQuery.$or.push(userFindQueryItem);
+		query.$or.push(item);
 	}
 
-	return userFindQuery;
+	return query;
 }
 
 export const UserCollection: string = userCollection;
