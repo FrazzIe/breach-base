@@ -3,7 +3,7 @@ import { RequiredIdentifiers, RequiredIdentifier } from "./identifer";
 
 interface IUserFindQueryItemField { [field: string]: any }
 interface IUserFindQueryItem { $and: Array<IUserFindQueryItemField> }
-interface IUserFindQuery { $or: Array<IUserFindQueryItem> }
+export interface IUserFindQuery { $or: Array<IUserFindQueryItem> }
 export interface IUserSchema {
 	ids: {
 		license?: string,
