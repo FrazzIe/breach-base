@@ -1,8 +1,7 @@
 import { IIdentifierList } from "../../../shared/utils/identifier";
 import { RequiredIdentifiers, RequiredIdentifier } from "./identifer";
 
-interface IUserFindQueryItemField { [field: string]: any }
-interface IUserFindQueryItem { $and: Array<IUserFindQueryItemField> }
+interface IUserFindQueryItem { [field: string]: any }
 export interface IUserFindQuery { $or: Array<IUserFindQueryItem> }
 export interface IUserSchema {
 	ids: {
@@ -38,21 +37,16 @@ export function BuildUserFindQuery(ids: IIdentifierList) {
 		const id = RequiredIdentifier[idx];
 
 		if (ids[id]) {
-			let item: IUserFindQueryItem = { $and: [] };
+			let item: IUserFindQueryItem = {};
 
 			// Collect all the required fields in an array
 			for (let reqIdx = 0; reqIdx < RequiredIdentifiers.length; reqIdx++) {
 				const reqId = RequiredIdentifiers[reqIdx];
-				const field: IUserFindQueryItemField = {};
 
-				field[`ids.${reqId}`] = ids[reqId];
-				item.$and.push(field);
+				item[`ids.${reqId}`] = ids[reqId];
 			}
 
-			const field: IUserFindQueryItemField = {};
-
-			field[`ids.${id}`] = ids[id];
-			item.$and.push(field);
+			item[`ids.${id}`] = ids[id];
 			query.$or.push(item);
 			optionalCount++;
 		}
@@ -60,15 +54,13 @@ export function BuildUserFindQuery(ids: IIdentifierList) {
 
 	if (optionalCount > 1) {
 		// Push all required and optional identifers in a $and entry
-		let item: IUserFindQueryItem = { $and: [] };
+		let item: IUserFindQueryItem = {};
 
 		// Collect all the required fields in an array
 		for (let reqIdx = 0; reqIdx < RequiredIdentifiers.length; reqIdx++) {
 			const reqId = RequiredIdentifiers[reqIdx];
-			const field: IUserFindQueryItemField = {};
 
-			field[`ids.${reqId}`] = ids[reqId];
-			item.$and.push(field);
+			item[`ids.${reqId}`] = ids[reqId];
 		}
 
 		// Push all optional in a $and entry
@@ -76,10 +68,7 @@ export function BuildUserFindQuery(ids: IIdentifierList) {
 			const id = RequiredIdentifier[idx];
 
 			if (ids[id]) {
-				const field: IUserFindQueryItemField = {};
-
-				field[`ids.${id}`] = ids[id];
-				item.$and.push(field);
+				item[`ids.${id}`] = ids[id];
 			}
 		}
 
