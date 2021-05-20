@@ -2,44 +2,54 @@ import { IIdentifierList } from "../../../shared/utils/identifier";
 import { RequiredIdentifiers, RequiredIdentifier } from "../user/identifer";
 import { UserCollection } from "../user/query";
 
-interface IBanFindQueryFirstItem { ban: { $exists: true } }
-interface IBanFindQuerySecondItemField { [field: string]: any }
-interface IBanFindQuerySecondItem { $or: Array<IBanFindQuerySecondItemField> }
-export interface IBanFindQuery { $and: [IBanFindQueryFirstItem, IBanFindQuerySecondItem]}
+interface IBanFindQueryItem { [field: string]: any }
+export interface IBanFindQuery { $or: Array<IBanFindQueryItem> }
 export interface IBanSchema {
 	reason: string,
 	expire?: number,
 	permanent?: boolean
 }
 
+/**
+ * Creates a $or: [ id, id ] query based on the required and optional identifers and tokens
+ * @param {IIdentifierList} ids Collection of player identifiers
+ * @param {string[]} tokens Collection of player tokens
+ * @returns {IBanFindQuery} Formatted MongoDB query for finding a banned user document
+ */
 export function BuildBanFindQuery(ids: IIdentifierList, tokens: string[]): IBanFindQuery {
-	const firstItem: IBanFindQueryFirstItem = { ban: { $exists: true } };
-	let secondItem: IBanFindQuerySecondItem = { $or: [] };
+	//const firstItem: IBanFindQueryFirstItem = { ban: { $exists: true } };
+	let query: IBanFindQuery = { $or: [] };
 
-	// Collect all the required fields in an array
+	// Collect all the required fields and push them into the $or array
 	for (let reqIdx = 0; reqIdx < RequiredIdentifiers.length; reqIdx++) {
 		const reqId = RequiredIdentifiers[reqIdx];
-		const field: IBanFindQuerySecondItemField = {};
+		const item: IBanFindQueryItem = {};
 
-		field[`ids.${reqId}`] = ids[reqId];
-		secondItem.$or.push(field);
+		item[`ids.${reqId}`] = ids[reqId];
+		query.$or.push(item);
 	}
 
-	// Collect all the optional fields in an array
+	// Collect all the optional fields and push them into the $or array
 	for (let idx = 0; idx < RequiredIdentifier.length; idx++) {
 		const id = RequiredIdentifier[idx];
 
 		if (ids[id]) {
-			const field: IBanFindQuerySecondItemField = {};
+			const item: IBanFindQueryItem = {};
 
-			field[`ids.${id}`] = ids[id];
-			secondItem.$or.push(field);
+			item[`ids.${id}`] = ids[id];
+			query.$or.push(item);
 		}
 	}
 
-	secondItem.$or.push({ tokens: { $in: tokens } });
+	// Push all the player token into the $or array
+	query.$or.push({ tokens: { $in: tokens } });
 
-	return { $and: [firstItem, secondItem] };
+	// Make sure the ban document exists within every $or array element
+	for (let item = 0; item < query.$or.length; item++) {
+		query.$or[item].ban = { $exists: true };
+	}
+
+	return query;
 }
 
 export const BanCollection: string = UserCollection;
