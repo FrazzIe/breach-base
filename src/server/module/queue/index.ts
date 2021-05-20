@@ -1,7 +1,7 @@
 import { HasRequiredIdentifiers } from "../user/identifer";
-import { Db } from "mongodb";
+import { Collection, Db } from "mongodb";
 import { GetIdentifiers, IIdentifierList } from "../../../shared/utils/identifier";
-import { UserCollection } from "../user/query";
+import { BuildUserFindQuery, IUserFindQuery, IUserSchema, UserCollection } from "../user/query";
 
 const messages = {
 	fetch: "Fetching account data",
@@ -28,8 +28,11 @@ async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db):
 		return;
 	}
 
-	const userCollection = db.collection(UserCollection);
+	const userCollection: Collection = db.collection(UserCollection);
+	const userFindQuery: IUserFindQuery = BuildUserFindQuery(ids);
+	const userFindResult: IUserSchema = await userCollection.findOne(userFindQuery);
 
+	console.log(userFindResult);
 	// db.collection("users").findOne({});
 	// db.collection("users").insertOne({});
 	deferrals.done("Leave");
