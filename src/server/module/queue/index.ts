@@ -54,6 +54,15 @@ async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db):
 				deferrals.done(`${messages.banMessagePermanent} ${messages.banReason} ${banFindResult.ban.reason} ${messages.banId} ${banFindResult._id.toHexString()}`);
 				return;
 			}
+
+			const currentTime: number = Date.now();
+			const expireTime: number = banFindResult.ban.expire * 1000;
+
+			if (currentTime < expireTime) {
+				const expireDate = new Date(expireTime);
+				deferrals.done(`${messages.banMessage} ${messages.banExpire} ${expireDate.toUTCString()} ${messages.banReason} ${banFindResult.ban.reason} ${messages.banId} ${banFindResult._id.toHexString()}`);
+				return;
+			}
 		}
 	}
 
