@@ -1,8 +1,9 @@
 import { HasRequiredIdentifiers } from "../user/identifer";
-import { Collection, Db } from "mongodb";
+import { Collection, Db, FindOneOptions } from "mongodb";
 import { GetIdentifiers, IIdentifierList } from "../../../shared/utils/identifier";
 import { GetTokens } from "../../../shared/utils/token";
 import { BuildUserFindQuery, IUserFindQuery, IUserSchema, UserCollection } from "../user/query";
+import { BanCollection, BuildBanFindQuery, IBanFindQuery, IBanSchema } from "../ban/query";
 
 const settings = {
 	checkBan: 0,
@@ -11,7 +12,12 @@ const messages = {
 	checkIdentifiers: "Checking identifiers",
 	checkBan: "Checking for ban",
 	fetch: "Fetching account data",
-}
+	banMessage: "\r\nYou have been banned from this server",
+	banMessagePermanent: "\r\nYou have been permanently banned from the server",
+	banExpire: "\r\nExpires:",
+	banReason: "\r\nReason:",
+	banId: "\r\nID:",
+};
 
 interface ICfxDeferral {
 	defer(): void,
@@ -37,6 +43,11 @@ async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db):
 
 	if (settings.checkBan) {
 		deferrals.update(messages.checkBan);
+
+		const banCollection: Collection = db.collection(BanCollection);
+		const banFindQuery: IBanFindQuery = BuildBanFindQuery(ids, tokens);
+		const banFindOptions: FindOneOptions<any> = { projection: { "_id": 1, "ban.permanent": 1, "ban.expire": 1, "ban.reason": 1 } };
+		const banFindResult: IBanSchema = await banCollection.findOne(banFindQuery, banFindOptions);
 	}
 
 	deferrals.update(messages.fetch);
