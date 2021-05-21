@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { FindOneOptions, ObjectId } from "mongodb";
 import { IIdentifierList } from "../../../shared/utils/identifier";
 import { RequiredIdentifiers, RequiredIdentifier } from "../user/identifer";
 import { UserCollection } from "../user/query";
@@ -20,9 +20,10 @@ export interface IBanSchema {
  * @param {string[]} tokens Collection of player tokens
  * @returns {IBanFindQuery} Formatted MongoDB query for finding a banned user document
  */
-export function BuildBanFindQuery(ids: IIdentifierList, tokens: string[]): IBanFindQuery {
+export function BuildBanFindQuery(ids: IIdentifierList, tokens: string[]): [IBanFindQuery, FindOneOptions<any>] {
 	//const firstItem: IBanFindQueryFirstItem = { ban: { $exists: true } };
 	let query: IBanFindQuery = { $or: [] };
+	const options: FindOneOptions<any> = { projection: { "_id": 1, "ban.permanent": 1, "ban.expire": 1, "ban.reason": 1 } };
 
 	// Collect all the required fields and push them into the $or array
 	for (let reqIdx = 0; reqIdx < RequiredIdentifiers.length; reqIdx++) {
@@ -53,7 +54,7 @@ export function BuildBanFindQuery(ids: IIdentifierList, tokens: string[]): IBanF
 		query.$or[item].ban = { $exists: true };
 	}
 
-	return query;
+	return [query, options];
 }
 
 export const BanCollection: string = UserCollection;
