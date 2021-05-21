@@ -63,6 +63,8 @@ async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db):
 				deferrals.done(`${messages.banMessage} ${messages.banExpire} ${expireDate.toUTCString()} ${messages.banReason} ${banFindResult.ban.reason} ${messages.banId} ${banFindResult._id.toHexString()}`);
 				return;
 			}
+
+			banCollection.updateOne({ _id: banFindResult._id }, { $unset: { ban: 1 } });
 		}
 	}
 
