@@ -48,6 +48,13 @@ async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db):
 		const banFindQuery: IBanFindQuery = BuildBanFindQuery(ids, tokens);
 		const banFindOptions: FindOneOptions<any> = { projection: { "_id": 1, "ban.permanent": 1, "ban.expire": 1, "ban.reason": 1 } };
 		const banFindResult: IBanSchema = await banCollection.findOne(banFindQuery, banFindOptions);
+
+		if (banFindResult) {
+			if (banFindResult.ban.permanent) {
+				deferrals.done(`${messages.banMessagePermanent} ${messages.banReason} ${banFindResult.ban.reason} ${messages.banId} ${banFindResult._id.toHexString()}`);
+				return;
+			}
+		}
 	}
 
 	deferrals.update(messages.fetch);
