@@ -21,7 +21,6 @@ export interface IBanSchema {
  * @returns {IBanFindQuery} Formatted MongoDB query for finding a banned user document
  */
 export function BuildBanFindQuery(ids: IIdentifierList, tokens: string[]): [IBanFindQuery, FindOneOptions<any>] {
-	//const firstItem: IBanFindQueryFirstItem = { ban: { $exists: true } };
 	let query: IBanFindQuery = { $or: [] };
 	const options: FindOneOptions<any> = { projection: { "_id": 1, "ban.permanent": 1, "ban.expire": 1, "ban.reason": 1 } };
 
