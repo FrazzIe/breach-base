@@ -4,7 +4,12 @@ import { GetIdentifiers, IIdentifierList } from "../../../shared/utils/identifie
 import { GetTokens } from "../../../shared/utils/token";
 import { BuildUserFindQuery, IUserFindQuery, IUserSchema, UserCollection } from "../user/query";
 
+const settings = {
+	checkBan: 0,
+};
 const messages = {
+	checkIdentifiers: "Checking identifiers",
+	checkBan: "Checking for ban",
 	fetch: "Fetching account data",
 }
 
@@ -22,7 +27,7 @@ async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db):
 	const tokens: string[] = GetTokens(src);
 
 	deferrals.defer();
-	deferrals.update(messages.fetch);
+	deferrals.update(messages.checkIdentifiers);
 
 	const [found, message] = HasRequiredIdentifiers(ids);
 	if (!found) {
@@ -30,6 +35,11 @@ async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db):
 		return;
 	}
 
+	if (settings.checkBan) {
+		deferrals.update(messages.checkBan);
+	}
+
+	deferrals.update(messages.fetch);
 	const userCollection: Collection = db.collection(UserCollection);
 	const userFindQuery: IUserFindQuery = BuildUserFindQuery(ids);
 	const userFindResult: IUserSchema = await userCollection.findOne(userFindQuery);
@@ -41,5 +51,7 @@ async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db):
 }
 
 export default function Init(db: Db): void {
+	settings.checkBan = GetConvarInt("queue_check_bans", 1);
+
 	on("playerConnecting", (name: string, _setKickReason: (reason: string) => void, deferrals: ICfxDeferral) => OnPlayerConnected(name, deferrals, db));
 }
