@@ -1,9 +1,11 @@
+import { ObjectId } from "bson";
 import { IIdentifierList } from "../../../shared/utils/identifier";
 import { RequiredIdentifiers, RequiredIdentifier } from "./identifer";
 
 interface IUserFindQueryItem { [field: string]: any }
 export interface IUserFindQuery { $or: Array<IUserFindQueryItem> }
 export interface IUserSchema {
+	_id: ObjectId,
 	ids: {
 		license?: string,
 		license2: string,

@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { IIdentifierList } from "../../../shared/utils/identifier";
 import { RequiredIdentifiers, RequiredIdentifier } from "../user/identifer";
 import { UserCollection } from "../user/query";
@@ -5,9 +6,12 @@ import { UserCollection } from "../user/query";
 interface IBanFindQueryItem { [field: string]: any }
 export interface IBanFindQuery { $or: Array<IBanFindQueryItem> }
 export interface IBanSchema {
-	reason: string,
-	expire?: number,
-	permanent?: boolean
+	_id: ObjectId,
+	ban?: {
+		reason: string,
+		expire?: number,
+		permanent?: boolean
+	}
 }
 
 /**
