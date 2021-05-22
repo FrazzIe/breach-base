@@ -35,21 +35,25 @@ async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db):
 	deferrals.defer();
 	deferrals.update(messages.checkIdentifiers);
 
+	//Check if a player has the required identifers needed to play
 	const [found, message] = HasRequiredIdentifiers(ids);
 	if (!found) {
 		deferrals.done(message);
 		return;
 	}
 
+	//Check if ban checking is enabled
 	if (settings.checkBan) {
 		deferrals.update(messages.checkBan);
 
+		//Build ban query, look for ban
 		const banCollection: Collection = db.collection(BanCollection);
-		const banFindQuery: IBanFindQuery = BuildBanFindQuery(ids, tokens);
-		const banFindOptions: FindOneOptions<any> = { projection: { "_id": 1, "ban.permanent": 1, "ban.expire": 1, "ban.reason": 1 } };
+		const [banFindQuery, banFindOptions]: [IBanFindQuery, FindOneOptions<any>] = BuildBanFindQuery(ids, tokens);
 		const banFindResult: IBanSchema = await banCollection.findOne(banFindQuery, banFindOptions);
 
+		//Check if a ban exists
 		if (banFindResult) {
+			//Reject if permanent
 			if (banFindResult.ban.permanent) {
 				deferrals.done(`${messages.banMessagePermanent} ${messages.banReason} ${banFindResult.ban.reason} ${messages.banId} ${banFindResult._id.toHexString()}`);
 				return;
@@ -58,24 +62,25 @@ async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db):
 			const currentTime: number = Date.now();
 			const expireTime: number = banFindResult.ban.expire * 1000;
 
+			//Reject if not expired
 			if (currentTime < expireTime) {
 				const expireDate = new Date(expireTime);
 				deferrals.done(`${messages.banMessage} ${messages.banExpire} ${expireDate.toUTCString()} ${messages.banReason} ${banFindResult.ban.reason} ${messages.banId} ${banFindResult._id.toHexString()}`);
 				return;
 			}
 
+			//Remove expired ban
 			banCollection.updateOne({ _id: banFindResult._id }, { $unset: { ban: 1 } });
 		}
 	}
 
 	deferrals.update(messages.fetch);
+
+	//Build user query, look for user
 	const userCollection: Collection = db.collection(UserCollection);
 	const userFindQuery: IUserFindQuery = BuildUserFindQuery(ids);
 	const userFindResult: IUserSchema = await userCollection.findOne(userFindQuery);
 
-	console.log(userFindResult);
-	// db.collection("users").findOne({});
-	// db.collection("users").insertOne({});
 	deferrals.done("Leave");
 }
 
