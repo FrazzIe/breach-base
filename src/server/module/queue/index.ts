@@ -2,7 +2,7 @@ import { HasRequiredIdentifiers } from "../user/identifer";
 import { Collection, Db, FindOneOptions } from "mongodb";
 import { GetIdentifiers, IIdentifierList } from "../../../shared/utils/identifier";
 import { GetTokens } from "../../../shared/utils/token";
-import { BuildUserFindQuery, IUserFindQuery, IUserSchema, UserCollection } from "../user/query";
+import { BuildUserFindQuery, BuildUserUpdateQuery, IUserFindQuery, IUserSchema, UserCollection } from "../user/query";
 import { BanCollection, BuildBanFindQuery, IBanFindQuery, IBanSchema } from "../ban/query";
 
 const settings = {
@@ -81,6 +81,14 @@ async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db):
 	const userFindQuery: IUserFindQuery = BuildUserFindQuery(ids);
 	const userFindResult: IUserSchema = await userCollection.findOne(userFindQuery);
 
+	if (userFindResult) {
+		//Build update query, update if necessary
+		const [userUpdateFilter, userUpdateQuery, userUpdateRequired] = BuildUserUpdateQuery(userFindResult, ids, tokens);
+		if (userUpdateRequired)
+			userCollection.updateOne(userUpdateFilter, userUpdateQuery);
+	} else {
+		//Build create query, create user
+	}
 	deferrals.done("Leave");
 }
 
