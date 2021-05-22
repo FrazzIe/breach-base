@@ -2,6 +2,8 @@ import { ObjectId } from "bson";
 import { IIdentifierList } from "../../../shared/utils/identifier";
 import { RequiredIdentifiers, RequiredIdentifier } from "./identifer";
 
+const userCollection: string = "users";
+
 interface IUserFindQueryItem { [field: string]: any }
 export interface IUserFindQuery { $or: Array<IUserFindQueryItem> }
 export interface IUserSchema {
@@ -23,7 +25,6 @@ export interface IUserSchema {
 		permanent?: boolean
 	}
 }
-const userCollection: string = "users";
 
 /**
  * Creates a $or: [ ids, ids ] query based on the required and optional identifers available
