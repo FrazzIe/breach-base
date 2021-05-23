@@ -1,8 +1,8 @@
 import { HasRequiredIdentifiers } from "../user/identifer";
-import { Collection, Db, FindOneOptions } from "mongodb";
+import { Collection, Db, FindOneOptions, InsertOneWriteOpResult, ObjectId } from "mongodb";
 import { GetIdentifiers, IIdentifierList } from "../../../shared/utils/identifier";
 import { GetTokens } from "../../../shared/utils/token";
-import { BuildUserFindQuery, BuildUserUpdateQuery, IUserFindQuery, IUserSchema, UserCollection } from "../user/query";
+import { BuildUserFindQuery, BuildUserInsertQuery, BuildUserUpdateQuery, IUserFindQuery, IUserSchema, UserCollection } from "../user/query";
 import { BanCollection, BuildBanFindQuery, IBanFindQuery, IBanSchema } from "../ban/query";
 
 const settings = {
@@ -17,6 +17,8 @@ const messages = {
 	banExpire: "\r\nExpires:",
 	banReason: "\r\nReason:",
 	banId: "\r\nID:",
+	update: "Updating account data",
+	create: "Creating account"
 };
 
 interface ICfxDeferral {
@@ -80,15 +82,26 @@ async function OnPlayerConnected(name: string, deferrals: ICfxDeferral, db: Db):
 	const userCollection: Collection = db.collection(UserCollection);
 	const userFindQuery: IUserFindQuery = BuildUserFindQuery(ids);
 	const userFindResult: IUserSchema = await userCollection.findOne(userFindQuery);
+	let userId: ObjectId;
 
 	if (userFindResult) {
 		//Build update query, update if necessary
+		deferrals.update(messages.update);
 		const [userUpdateFilter, userUpdateQuery, userUpdateRequired] = BuildUserUpdateQuery(userFindResult, ids, tokens);
 		if (userUpdateRequired)
 			userCollection.updateOne(userUpdateFilter, userUpdateQuery);
+
+		userId = userFindResult._id;
 	} else {
 		//Build create query, create user
+		deferrals.update(messages.create);
+		const userInsertQuery: IUserSchema = BuildUserInsertQuery(ids, tokens);
+		const userInsertResult: InsertOneWriteOpResult<any> = await userCollection.insertOne(userInsertQuery);
+
+		userId = userInsertResult.insertedId;
 	}
+
+
 	deferrals.done("Leave");
 }
 
